@@ -15,6 +15,7 @@
  */
 package com.example.android.pets;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,6 +35,8 @@ import data.PetDbHelper;
  * Displays list of pets that were entered and stored in the app.
  */
 public class CatalogActivity extends AppCompatActivity {
+
+    private PetDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,7 @@ public class CatalogActivity extends AppCompatActivity {
     private void displayDatabaseInfo() {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
-        PetDbHelper mDbHelper = new PetDbHelper(this);
+        mDbHelper = new PetDbHelper(this);
 
         // Create and/or open a database to read from it
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -81,20 +84,18 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     private void insertPet() {
-        String insert = "INSERT INTO pets( "
-                + PetEntry.COLUMN_PET_NAME + ", "
-                + PetEntry.COLUMN_PET_BREED + ", "
-                + PetEntry.COLUMN_PET_GENDER + ", "
-                + PetEntry.COLUMN_PET_WEIGHT + ") "
-                + "VALUES ( "
-                + "Toto, "
-                + "Terrier, "
-                + PetEntry.GENDER_MALE + ", "
-                + 7 + ");";
 
+        mDbHelper = new PetDbHelper(this);
 
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PetEntry.COLUMN_PET_NAME, "Toto");
+        contentValues.put(PetEntry.COLUMN_PET_BREED, "Terrier");
+        contentValues.put(PetEntry.COLUMN_PET_GENDER, PetEntry.GENDER_MALE);
+        contentValues.put(PetEntry.COLUMN_PET_WEIGHT, 7);
 
+        db.insert(PetEntry.TABLE_NAME, null, contentValues);
     }
 
     @Override
