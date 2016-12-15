@@ -17,6 +17,7 @@ package com.example.android.pets;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -30,11 +31,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import data.PetContract;
-import data.PetContract.PetEntry;
-import data.PetDbHelper;
-
-import static android.os.Build.VERSION_CODES.M;
+import com.example.android.pets.data.PetContract.PetEntry;
+import com.example.android.pets.data.PetDbHelper;
 
 /**
  * Allows user to create a new pet or edit an existing one.
@@ -131,24 +129,23 @@ public class EditorActivity extends AppCompatActivity {
         int gender = mGender;
         int weight = Integer.parseInt(mWeightEditText.getText().toString().trim());
 
-        mDbHelper = new PetDbHelper(this);
-
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         ContentValues contentValues = new ContentValues();
         contentValues.put(PetEntry.COLUMN_PET_NAME, name);
         contentValues.put(PetEntry.COLUMN_PET_BREED, breed);
         contentValues.put(PetEntry.COLUMN_PET_GENDER, gender);
         contentValues.put(PetEntry.COLUMN_PET_WEIGHT, weight);
 
-        long rowID = db.insert(PetEntry.TABLE_NAME, null, contentValues);
+        Uri uri = getContentResolver().insert(PetEntry.CONTENT_URI, contentValues);
 
-        if(rowID == -1) {
-            Toast.makeText(this, "Error in adding a new element", Toast.LENGTH_SHORT).show();
+        if(uri == null) {
+            String error = getResources().getString(R.string.unable_to_add_pet);
+            Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
         }
         else {
-            Toast.makeText(this, "Pet added with ID: " + rowID, Toast.LENGTH_SHORT).show();
+            String added = getResources().getString(R.string.added_pet);
+            Toast.makeText(this, added, Toast.LENGTH_SHORT).show();
         }
+
     }
 
     @Override

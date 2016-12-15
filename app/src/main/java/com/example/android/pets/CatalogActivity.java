@@ -28,15 +28,14 @@ import android.view.View;
 import android.widget.TextView;
 
 
-import data.PetContract.PetEntry;
-import data.PetDbHelper;
+import com.example.android.pets.data.PetContract.PetEntry;
+import com.example.android.pets.data.PetDbHelper;
 
 /**
  * Displays list of pets that were entered and stored in the app.
  */
 public class CatalogActivity extends AppCompatActivity {
 
-    private PetDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,15 +66,9 @@ public class CatalogActivity extends AppCompatActivity {
      * the pets database.
      */
     private void displayDatabaseInfo() {
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        mDbHelper = new PetDbHelper(this);
-
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         // List of columns to extract for SQL Query
-        String[] columns = {
+        String[] mProjection = {
                 PetEntry._ID,
                 PetEntry.COLUMN_PET_NAME,
                 PetEntry.COLUMN_PET_BREED,
@@ -83,15 +76,8 @@ public class CatalogActivity extends AppCompatActivity {
                 PetEntry.COLUMN_PET_WEIGHT
         };
 
-        // Query method called on db object to prohibit SQL Injection
-        Cursor cursor = db.query(
-                PetEntry.TABLE_NAME,
-                columns,
-                null,
-                null,
-                null,
-                null,
-                null);
+        Cursor cursor = getContentResolver().query(PetEntry.CONTENT_URI, mProjection, null, null, null);
+
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
@@ -136,17 +122,13 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void insertPet(String name, String breed, int gender, int weight) {
 
-        mDbHelper = new PetDbHelper(this);
-
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         ContentValues contentValues = new ContentValues();
         contentValues.put(PetEntry.COLUMN_PET_NAME, name);
         contentValues.put(PetEntry.COLUMN_PET_BREED, breed);
         contentValues.put(PetEntry.COLUMN_PET_GENDER, gender);
         contentValues.put(PetEntry.COLUMN_PET_WEIGHT, weight);
 
-        db.insert(PetEntry.TABLE_NAME, null, contentValues);
+        getContentResolver().insert(PetEntry.CONTENT_URI, contentValues);
     }
 
     @Override
@@ -161,7 +143,7 @@ public class CatalogActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // User clicked on a menu option in the app bar overflow menu
         switch (item.getItemId()) {
-            // Respond to a click on the "Insert dummy data" menu option
+            // Respond to a click on the "Insert dummy com.example.android.pets.data" menu option
             case R.id.action_insert_dummy_data:
                 insertPet("Toto", "Terrier", PetEntry.GENDER_MALE, 7);
                 displayDatabaseInfo();
