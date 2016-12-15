@@ -59,7 +59,13 @@
     <!-- Label for dropdown menu option if the pet is female [CHAR LIMIT=20] -->
     <string name="gender_female">Female</string>
 
-    <string name="added_pet">Pet added with id: </string>
+    <string name="added_pet">Pet added</string>
 
     <string name="unable_to_add_pet">Unable to add pet</string>
+
+    <!-- Title text for the empty view, which describes the empty dog house image [CHAR LIMIT=50] -->
+    <string name="empty_view_title_text">It\'s a bit lonely here...</string>
+
+    <!-- Subtitle text for the empty view that prompts the user to add a pet [CHAR LIMIT=50] -->
+    <string name="empty_view_subtitle_text">Get started by adding a pet</string>
 </resources>
