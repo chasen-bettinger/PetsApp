@@ -16,6 +16,7 @@
 package com.example.android.pets;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -28,7 +29,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import com.example.android.pets.data.PetContract.PetEntry;
@@ -39,7 +42,7 @@ import java.util.List;
 /**
  * Displays list of pets that were entered and stored in the app.
  */
-public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private PetCursorAdapter pca;
 
@@ -64,7 +67,19 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         pca = new PetCursorAdapter(this, null);
         lv.setAdapter(pca);
 
-        getLoaderManager().initLoader(0,null,this);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Uri uri = ContentUris.withAppendedId(PetEntry.CONTENT_URI, l);
+
+                Intent intent = new Intent(getBaseContext(), EditorActivity.class);
+                intent.setData(uri);
+                startActivity(intent);
+            }
+        });
+
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -101,7 +116,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
-                // Do nothing for now
+                deletePets();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -128,5 +143,22 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         pca.swapCursor(null);
+    }
+
+    private void deletePets() {
+
+        int rowsDeleted = 0;
+
+        rowsDeleted = getContentResolver().delete(PetEntry.CONTENT_URI, null, null);
+
+        if (rowsDeleted == 0) {
+            // If no rows were deleted, then there was an error with the delete.
+            Toast.makeText(this, getString(R.string.editor_delete_pet_failed),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the delete was successful and we can display a toast.
+            Toast.makeText(this, getString(R.string.editor_delete_pet_successful),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }
