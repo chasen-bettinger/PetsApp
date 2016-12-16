@@ -204,7 +204,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         contentValues.put(PetEntry.COLUMN_PET_GENDER, gender);
 
         if (TextUtils.isEmpty(breedString)) {
-            breedString = "Unknown Breed";
+            breedString = getString(R.string.unknown_breed);
         }
 
         contentValues.put(PetEntry.COLUMN_PET_BREED, breedString);
@@ -324,10 +324,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                     mGenderSpinner.setSelection(0);
                     break;
                 case PetEntry.GENDER_FEMALE:
-                    mGenderSpinner.setSelection(1);
+                    mGenderSpinner.setSelection(2);
                     break;
                 case PetEntry.GENDER_MALE:
-                    mGenderSpinner.setSelection(2);
+                    mGenderSpinner.setSelection(1);
                     break;
             }
 
